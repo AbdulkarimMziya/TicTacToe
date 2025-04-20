@@ -77,6 +77,7 @@ const Game = (() => {
     }
 
     function restart() {
+        gameOver = false;
         for(let i = 0; i < 9; i++) {
             GameBoardModule.update(i,"");
         }
@@ -96,6 +97,10 @@ function createPlayer(name, symbol) {
         name,
         symbol
     }
+}
+
+function checkForTie(board) {
+    return board.every(cell => cell !== "");
 }
 
 function checkForWinner(board, playerSymbol) {
