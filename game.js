@@ -1,21 +1,30 @@
 const GameBoardModule = (() => {
-    let gameBoard = ["0", "", "", "X", "", "", "", "", ""]
+    let gameBoard = ["", "", "", "", "", "", "", "", ""]
 
-    function render() {
+
+    const getGameBoard = () => gameBoard;
+    function render() { 
         let boardHTML = "";
         gameBoard.forEach((square,index) => {
             boardHTML += `<div class="cell" id="cell-${index}">${square}</div>`
         });
         document.querySelector("#gameBoardContainer").innerHTML = boardHTML;
-        
+
         const $cells = document.querySelectorAll('.cell');
         $cells.forEach(($cell) =>{
             $cell.addEventListener('click', Game.handleClickEvent);
         });
     }
 
+    function update(index,value) {
+        gameBoard[index] = value;
+        render();
+    }
+
     return {
         render,
+        update,
+        getGameBoard
     }
 })(); 
 
@@ -36,11 +45,22 @@ const Game = (() => {
         currentPlayerIndex = 0;
         gameOver = false
         GameBoardModule.render();
+
+        const $cells = document.querySelectorAll('.cell');
+        $cells.forEach(($cell) =>{
+            $cell.addEventListener('click', Game.handleClickEvent);
+        });
     }
 
     function handleClickEvent(event) {
-        alert("Square Clicked!!!");
-        console.log(`${event}`);
+        const index = parseInt(event.target.id.split("-")[1]);
+
+        if(GameBoardModule.getGameBoard()[index] !== "") {
+            return;
+        }
+
+        GameBoardModule.update(index, players[currentPlayerIndex].symbol);
+        currentPlayerIndex = currentPlayerIndex === 0 ? 1 : 0;
     }
     
     return {
