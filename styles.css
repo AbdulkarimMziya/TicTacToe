@@ -49,3 +49,8 @@ header h1 {
     height: 150px;
 }
 
+.message {
+    font-size: 26px;
+    font-weight: bold;
+}
+
