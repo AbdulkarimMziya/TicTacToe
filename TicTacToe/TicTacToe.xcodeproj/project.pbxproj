@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		4D511FD72F144D8800638FF7 /* TapCounterViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4D511FD62F144D8100638FF7 /* TapCounterViewController.swift */; };
+		4D511FD92F14656700638FF7 /* GameboardViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4D511FD82F14655600638FF7 /* GameboardViewController.swift */; };
 		61C976612F0355B2004D2BB9 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61C976602F0355B2004D2BB9 /* AppDelegate.swift */; };
 		61C976632F0355B2004D2BB9 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61C976622F0355B2004D2BB9 /* SceneDelegate.swift */; };
 		61C976652F0355B2004D2BB9 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61C976642F0355B2004D2BB9 /* ViewController.swift */; };
@@ -14,6 +16,8 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		4D511FD62F144D8100638FF7 /* TapCounterViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TapCounterViewController.swift; sourceTree = "<group>"; };
+		4D511FD82F14655600638FF7 /* GameboardViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameboardViewController.swift; sourceTree = "<group>"; };
 		61C9765D2F0355B2004D2BB9 /* TicTacToe.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TicTacToe.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		61C976602F0355B2004D2BB9 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		61C976622F0355B2004D2BB9 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -52,6 +56,8 @@
 		61C9765F2F0355B2004D2BB9 /* TicTacToe */ = {
 			isa = PBXGroup;
 			children = (
+				4D511FD82F14655600638FF7 /* GameboardViewController.swift */,
+				4D511FD62F144D8100638FF7 /* TapCounterViewController.swift */,
 				61C976602F0355B2004D2BB9 /* AppDelegate.swift */,
 				61C976622F0355B2004D2BB9 /* SceneDelegate.swift */,
 				61C976642F0355B2004D2BB9 /* ViewController.swift */,
@@ -130,8 +136,10 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				4D511FD92F14656700638FF7 /* GameboardViewController.swift in Sources */,
 				61C976652F0355B2004D2BB9 /* ViewController.swift in Sources */,
 				61C976612F0355B2004D2BB9 /* AppDelegate.swift in Sources */,
+				4D511FD72F144D8800638FF7 /* TapCounterViewController.swift in Sources */,
 				61C976632F0355B2004D2BB9 /* SceneDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -267,6 +275,7 @@
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				IPHONEOS_DEPLOYMENT_TARGET = 17;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -294,6 +303,7 @@
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				IPHONEOS_DEPLOYMENT_TARGET = 17;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
