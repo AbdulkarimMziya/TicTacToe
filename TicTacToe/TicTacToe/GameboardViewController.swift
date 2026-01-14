@@ -239,6 +239,9 @@ class GameboardView: UIView {
 // MARK: Gameboard View Controller
 class GameboardViewController: UIViewController {
     
+    
+    let gameManager = GameManager()
+    
     var scoreBoard = ScoreBoardView()
     
     let boardView = GameboardView()
@@ -297,10 +300,13 @@ class GameboardViewController: UIViewController {
     
     @objc
     private func cellTapped(_ sender: Cell){
-        sender.setSymbol(currentPlayer)
+        sender.setSymbol(gameManager.currentPlayer)
         
         // switch turn
-        currentPlayer = (currentPlayer == .x) ? .o : .x
+        gameManager.makeMove(
+            x: sender.xPos,
+            y: sender.yPos
+        )
 
         print("Tapped cell at (\(sender.xPos), \(sender.yPos))")
     }
@@ -312,4 +318,86 @@ class GameboardViewController: UIViewController {
         currentPlayer = .x
     }
 
+}
+
+
+// MARK: Game Logic Implementation
+class GameManager {
+    
+    private var gameBoard: [[Cell.CellSymbol]]
+    
+    var currentPlayer = Cell.CellSymbol.x
+    
+    enum GameResult {
+        case win(Cell.CellSymbol)
+        case draw
+        case ongoing
+    }
+    
+    init() {
+        self.gameBoard = Array(
+            repeating: Array(repeating:.empty, count: 3),
+            count: 3
+        )
+    }
+    
+    
+    func makeMove(x:Int, y:Int) {
+        gameBoard[x][y] = currentPlayer
+        
+        currentPlayer = (currentPlayer == .x) ? .o : .x
+    }
+    
+    func checkGameState() -> GameResult {
+        
+        // Check Rows
+        for row in 0..<3 {
+            let first = gameBoard[row][0]
+
+            // Skip empty rows
+            if first == .empty { continue }
+
+            if gameBoard[row][1] == first && gameBoard[row][2] == first {
+                return .win(first)
+            }
+        }
+        
+        // Check columns
+        for col in 0..<3 {
+            let first = gameBoard[0][col]
+
+            // Skip empty columns
+            if first == .empty { continue }
+
+            if gameBoard[1][col] == first && gameBoard[2][col] == first {
+                return .win(first)
+            }
+        }
+        
+        // Check diagonals
+        let center = gameBoard[1][1]
+
+        if center != .empty {
+
+            // Top-left to bottom-right
+            if gameBoard[0][0] == center && gameBoard[2][2] == center {
+                return .win(center)
+            }
+
+            // Top-right to bottom-left
+            if gameBoard[0][2] == center && gameBoard[2][0] == center {
+                return .win(center)
+            }
+        }
+        
+        // Check for draw
+        for row in gameBoard {
+            if row.contains(.empty) {
+                return .ongoing
+            }
+        }
+        
+        return .draw
+    }
+    
 }
