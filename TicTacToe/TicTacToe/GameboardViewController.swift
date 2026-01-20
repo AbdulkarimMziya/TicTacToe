@@ -237,7 +237,7 @@ class GameboardView: UIView {
 }
 
 // MARK: Gameboard View Controller
-class GameboardViewController: UIViewController {
+class GameboardViewController: UIViewController, GameManagerDelegate {
     
     
     let gameManager = GameManager()
@@ -259,6 +259,8 @@ class GameboardViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .white
+        
+        gameManager.delegate = self
         
         scoreBoard.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(scoreBoard)
@@ -300,6 +302,8 @@ class GameboardViewController: UIViewController {
     
     @objc
     private func cellTapped(_ sender: Cell){
+        guard sender.isEnabled else { return }
+        
         sender.setSymbol(gameManager.currentPlayer)
         
         // switch turn
@@ -313,16 +317,61 @@ class GameboardViewController: UIViewController {
     
     @objc
     private func restartTapped() {
-        boardView.clearBoard()
+        gameManager.resetGame()
         
-        currentPlayer = .x
+    }
+    
+    func gameDidEnd(result: GameManager.GameResult) {
+        setBoardEnabled(false)
+        
+        switch result {
+        case .win(let winner):
+            print("Winner:", winner)
+
+        case .draw:
+            print("Draw")
+
+        case .ongoing:
+            break
+        }
     }
 
+    func playerDidChange(to player: Cell.CellSymbol) {
+        print("Current Player:", player)
+    }
+    
+    
+    func gameDidReset() {
+        boardView.clearBoard()
+        setBoardEnabled(true)
+    }
+    
+    private func setBoardEnabled(_ enabled: Bool) {
+        for row in boardView.cells {
+            for cell in row {
+                cell.isEnabled = enabled
+            }
+        }
+    }
+
+
+
+
+}
+
+
+// MARK: Game Delegate Protocol
+protocol GameManagerDelegate: AnyObject {
+    func gameDidEnd(result: GameManager.GameResult)
+    func playerDidChange(to player: Cell.CellSymbol)
+    func gameDidReset()
 }
 
 
 // MARK: Game Logic Implementation
 class GameManager {
+    
+    weak var delegate: GameManagerDelegate?
     
     private var gameBoard: [[Cell.CellSymbol]]
     
@@ -345,7 +394,17 @@ class GameManager {
     func makeMove(x:Int, y:Int) {
         gameBoard[x][y] = currentPlayer
         
-        currentPlayer = (currentPlayer == .x) ? .o : .x
+        let result  = checkGameState()
+        
+        switch result {
+            case .ongoing:
+                currentPlayer = (currentPlayer == .x) ? .o : .x
+                delegate?.playerDidChange(to: currentPlayer)
+
+            case .win, .draw:
+                delegate?.gameDidEnd(result: result)
+        }
+        
     }
     
     func checkGameState() -> GameResult {
@@ -400,4 +459,15 @@ class GameManager {
         return .draw
     }
     
+    func resetGame() {
+        gameBoard = Array(
+            repeating: Array(repeating: .empty, count: 3),
+            count: 3
+        )
+
+        currentPlayer = .x
+        delegate?.gameDidReset()
+        delegate?.playerDidChange(to: currentPlayer)
+    }
+   
 }
