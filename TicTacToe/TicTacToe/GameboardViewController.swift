@@ -128,11 +128,11 @@ class ScoreBoardView: UIView {
 // MARK: Custom Board Cell Class
 class Cell: UIButton {
     
-    enum CellSymbol {
-        case empty, x, o
+    enum CellSymbol: String {
+        case x = "X", o = "O"
     }
     
-    var symbol: CellSymbol = .empty
+    private var symbol: CellSymbol?
     let xPos: Int
     let yPos: Int
     
@@ -150,25 +150,24 @@ class Cell: UIButton {
     private func setupCell() {
         self.backgroundColor = .systemTeal
         self.layer.cornerRadius = 5
-        self.setTitle("", for: .normal)
-        self.titleLabel?.font = UIFont.systemFont(ofSize: 24, weight: .medium)
-        
-    }
-    
-    func setSymbol(_ newSymbol: CellSymbol) {
-        guard symbol == .empty else { return }
-
-        self.symbol = newSymbol
-
-        self.setTitle(newSymbol == .x ? "X" : "O", for: .normal)
-        self.isEnabled = false
+        self.setTitle(symbol?.rawValue ?? "", for: .normal)
+        self.titleLabel?.font = UIFont.systemFont(ofSize: 64, weight: .medium)
         self.setTitleColor(.black, for: .disabled)
     }
     
+    private func _setSymbol(_ newSymbol: CellSymbol?) {
+        self.symbol = newSymbol
+
+        self.setTitle(newSymbol?.rawValue ?? "", for: .normal)
+        self.isEnabled = newSymbol != nil ? false : true
+    }
+    
+    func setSymbol(_ newSymbol: CellSymbol) {
+        _setSymbol(newSymbol)
+    }
+    
     func reset() {
-        symbol = .empty
-        setTitle("", for: .normal)
-        isEnabled = true
+        _setSymbol(nil)
     }
     
     func configureTap(target: Any?, action: Selector) {
