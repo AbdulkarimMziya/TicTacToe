@@ -234,7 +234,10 @@ class GameboardView: UIView {
 
 // MARK: Gameboard View Controller
 class GameboardViewController: UIViewController, GameManagerDelegate {
-    
+    private var playerScore = 0
+    private var opponentScore = 0
+    private var drawScore = 0
+
     
     let gameManager = GameManager()
     
@@ -321,14 +324,23 @@ class GameboardViewController: UIViewController, GameManagerDelegate {
         setBoardEnabled(false)
         
         switch result {
-        case .win(let winner):
-            print("Winner:", winner)
+            case .win(let winner):
+                if winner == .x {
+                    playerScore += 1
+                    scoreBoard.updateScore(for: .player, to: playerScore)
+                } else {
+                    opponentScore += 1
+                    scoreBoard.updateScore(for: .opponent, to: opponentScore)
+                }
+                print("Winner:", winner)
 
-        case .draw:
-            print("Draw")
+            case .draw:
+                drawScore += 1
+                scoreBoard.updateScore(for: .draw, to: drawScore)
+                print("Draw")
 
-        case .ongoing:
-            break
+            case .ongoing:
+                break
         }
     }
 
