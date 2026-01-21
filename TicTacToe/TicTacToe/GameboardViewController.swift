@@ -129,10 +129,10 @@ class ScoreBoardView: UIView {
 class Cell: UIButton {
     
     enum CellSymbol: String {
-        case x = "X", o = "O"
+        case x = "X", o = "O", empty = ""
     }
     
-    private var symbol: CellSymbol?
+    private var symbol: CellSymbol = .empty
     let xPos: Int
     let yPos: Int
     
@@ -150,24 +150,21 @@ class Cell: UIButton {
     private func setupCell() {
         self.backgroundColor = .systemTeal
         self.layer.cornerRadius = 5
-        self.setTitle(symbol?.rawValue ?? "", for: .normal)
+        self.setTitle(symbol.rawValue, for: .normal)
         self.titleLabel?.font = UIFont.systemFont(ofSize: 64, weight: .medium)
         self.setTitleColor(.black, for: .disabled)
     }
     
-    private func _setSymbol(_ newSymbol: CellSymbol?) {
+    func setSymbol(_ newSymbol: CellSymbol) {
         self.symbol = newSymbol
 
-        self.setTitle(newSymbol?.rawValue ?? "", for: .normal)
-        self.isEnabled = newSymbol != nil ? false : true
+        self.setTitle(newSymbol.rawValue, for: .normal)
+        self.isEnabled = newSymbol != .empty ? false : true
     }
     
-    func setSymbol(_ newSymbol: CellSymbol) {
-        _setSymbol(newSymbol)
-    }
     
     func reset() {
-        _setSymbol(nil)
+        setSymbol(.empty)
     }
     
     func configureTap(target: Any?, action: Selector) {
