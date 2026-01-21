@@ -129,10 +129,10 @@ class ScoreBoardView: UIView {
 class Cell: UIButton {
     
     enum CellSymbol: String {
-        case x = "X", o = "O"
+        case x = "X", o = "O", empty = ""
     }
     
-    private var symbol: CellSymbol?
+    private var symbol: CellSymbol = .empty
     let xPos: Int
     let yPos: Int
     
@@ -150,24 +150,21 @@ class Cell: UIButton {
     private func setupCell() {
         self.backgroundColor = .systemTeal
         self.layer.cornerRadius = 5
-        self.setTitle(symbol?.rawValue ?? "", for: .normal)
+        self.setTitle(symbol.rawValue, for: .normal)
         self.titleLabel?.font = UIFont.systemFont(ofSize: 64, weight: .medium)
         self.setTitleColor(.black, for: .disabled)
     }
     
-    private func _setSymbol(_ newSymbol: CellSymbol?) {
+    func setSymbol(_ newSymbol: CellSymbol) {
         self.symbol = newSymbol
 
-        self.setTitle(newSymbol?.rawValue ?? "", for: .normal)
-        self.isEnabled = newSymbol != nil ? false : true
+        self.setTitle(newSymbol.rawValue, for: .normal)
+        self.isEnabled = newSymbol != .empty ? false : true
     }
     
-    func setSymbol(_ newSymbol: CellSymbol) {
-        _setSymbol(newSymbol)
-    }
     
     func reset() {
-        _setSymbol(nil)
+        setSymbol(.empty)
     }
     
     func configureTap(target: Any?, action: Selector) {
@@ -236,7 +233,10 @@ class GameboardView: UIView {
 }
 
 // MARK: Gameboard View Controller
-class GameboardViewController: UIViewController {
+class GameboardViewController: UIViewController, GameManagerDelegate {
+    
+    
+    let gameManager = GameManager()
     
     var scoreBoard = ScoreBoardView()
     
@@ -255,6 +255,8 @@ class GameboardViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .white
+        
+        gameManager.delegate = self
         
         scoreBoard.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(scoreBoard)
@@ -296,19 +298,172 @@ class GameboardViewController: UIViewController {
     
     @objc
     private func cellTapped(_ sender: Cell){
-        sender.setSymbol(currentPlayer)
+        guard sender.isEnabled else { return }
+        
+        sender.setSymbol(gameManager.currentPlayer)
         
         // switch turn
-        currentPlayer = (currentPlayer == .x) ? .o : .x
+        gameManager.makeMove(
+            x: sender.xPos,
+            y: sender.yPos
+        )
 
         print("Tapped cell at (\(sender.xPos), \(sender.yPos))")
     }
     
     @objc
     private func restartTapped() {
-        boardView.clearBoard()
+        gameManager.resetGame()
         
-        currentPlayer = .x
+    }
+    
+    func gameDidEnd(result: GameManager.GameResult) {
+        setBoardEnabled(false)
+        
+        switch result {
+        case .win(let winner):
+            print("Winner:", winner)
+
+        case .draw:
+            print("Draw")
+
+        case .ongoing:
+            break
+        }
     }
 
+    func playerDidChange(to player: Cell.CellSymbol) {
+        print("Current Player:", player)
+    }
+    
+    
+    func gameDidReset() {
+        boardView.clearBoard()
+        setBoardEnabled(true)
+    }
+    
+    private func setBoardEnabled(_ enabled: Bool) {
+        for row in boardView.cells {
+            for cell in row {
+                cell.isEnabled = enabled
+            }
+        }
+    }
+
+
+
+
+}
+
+
+// MARK: Game Delegate Protocol
+protocol GameManagerDelegate: AnyObject {
+    func gameDidEnd(result: GameManager.GameResult)
+    func playerDidChange(to player: Cell.CellSymbol)
+    func gameDidReset()
+}
+
+
+// MARK: Game Logic Implementation
+class GameManager {
+    
+    weak var delegate: GameManagerDelegate?
+    
+    private var gameBoard: [[Cell.CellSymbol]]
+    
+    var currentPlayer = Cell.CellSymbol.x
+    
+    enum GameResult {
+        case win(Cell.CellSymbol)
+        case draw
+        case ongoing
+    }
+    
+    init() {
+        self.gameBoard = Array(
+            repeating: Array(repeating:.empty, count: 3),
+            count: 3
+        )
+    }
+    
+    
+    func makeMove(x:Int, y:Int) {
+        gameBoard[x][y] = currentPlayer
+        
+        let result  = checkGameState()
+        
+        switch result {
+            case .ongoing:
+                currentPlayer = (currentPlayer == .x) ? .o : .x
+                delegate?.playerDidChange(to: currentPlayer)
+
+            case .win, .draw:
+                delegate?.gameDidEnd(result: result)
+        }
+        
+    }
+    
+    func checkGameState() -> GameResult {
+        
+        // Check Rows
+        for row in 0..<3 {
+            let first = gameBoard[row][0]
+
+            // Skip empty rows
+            if first == .empty { continue }
+
+            if gameBoard[row][1] == first && gameBoard[row][2] == first {
+                return .win(first)
+            }
+        }
+        
+        // Check columns
+        for col in 0..<3 {
+            let first = gameBoard[0][col]
+
+            // Skip empty columns
+            if first == .empty { continue }
+
+            if gameBoard[1][col] == first && gameBoard[2][col] == first {
+                return .win(first)
+            }
+        }
+        
+        // Check diagonals
+        let center = gameBoard[1][1]
+
+        if center != .empty {
+
+            // Top-left to bottom-right
+            if gameBoard[0][0] == center && gameBoard[2][2] == center {
+                return .win(center)
+            }
+
+            // Top-right to bottom-left
+            if gameBoard[0][2] == center && gameBoard[2][0] == center {
+                return .win(center)
+            }
+        }
+        
+        // Check for draw
+        for row in gameBoard {
+            if row.contains(.empty) {
+                return .ongoing
+            }
+        }
+        
+        return .draw
+    }
+    
+    func resetGame() {
+        gameBoard = Array(
+            repeating: Array(repeating: .empty, count: 3),
+            count: 3
+        )
+
+        currentPlayer = .x
+        delegate?.gameDidReset()
+        delegate?.playerDidChange(to: currentPlayer)
+    }
+   
 }
