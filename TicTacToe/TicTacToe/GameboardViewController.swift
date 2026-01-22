@@ -15,9 +15,9 @@ class ScoreBoardView: UIView {
 
         var title: String {
             switch self {
-                case .player: return "Player"
+                case .player: return "Player X"
                 case .draw: return "Draw"
-                case .opponent: return "Opponent"
+                case .opponent: return "Opponent O"
             }
         }
     }
@@ -25,15 +25,9 @@ class ScoreBoardView: UIView {
     private var scoreLabels: [Player: UILabel] = [:]
 
     
-    private var label: UILabel = {
-        let label = UILabel()
-        label.text = "Scores"
-        label.font = UIFont.systemFont(ofSize: 24, weight: .bold)
-        label.textColor = .white
-        label.translatesAutoresizingMaskIntoConstraints = false
-        
-        return label
-    }()
+    private let neonBlue = UIColor(red: 64/255, green: 216/255, blue: 255/255, alpha: 1)
+    private let neonRed = UIColor(red: 255/255, green: 77/255, blue: 109/255, alpha: 1)
+    private let darkCardBG = UIColor(red: 15/255, green: 24/255, blue: 40/255, alpha: 1)
     
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -46,15 +40,9 @@ class ScoreBoardView: UIView {
     }
     
     func setUpScoreBoard() {
-        self.backgroundColor = .systemGray5
-        self.layer.cornerRadius = 5
+        self.backgroundColor = .systemBackground
+        self.layer.cornerRadius = 16
         
-        self.addSubview(label)
-        
-        NSLayoutConstraint.activate([
-            label.topAnchor.constraint(equalTo: self.topAnchor, constant: 8),
-            label.centerXAnchor.constraint(equalTo: self.centerXAnchor)
-        ])
         
         let card = makeScoreCard(for: .player)
         let card1 = makeScoreCard(for: .draw)
@@ -70,37 +58,57 @@ class ScoreBoardView: UIView {
         self.addSubview(row)
         
         NSLayoutConstraint.activate([
-            row.topAnchor.constraint(equalTo: label.bottomAnchor, constant: 16),
-            row.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 16),
-            row.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -16),
-            row.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -16)
+            row.topAnchor.constraint(equalTo: self.topAnchor, constant: 8),
+            row.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 8),
+            row.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -8),
+            row.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -8)
         ])
-        
-        
+
     }
     
     private func makeScoreCard(for player: Player) -> UIView {
+        
+        let accentColor: UIColor
+            switch player {
+            case .player:
+                accentColor = neonBlue
+            case .draw:
+                accentColor = .systemGray
+            case .opponent:
+                accentColor = neonRed
+        }
+
         let container = UIView()
-        container.backgroundColor = .white
-        container.layer.cornerRadius = 5
+        container.backgroundColor = darkCardBG
+        container.layer.cornerRadius = 16
+        container.clipsToBounds = false
+        container.layer.borderWidth = 1.5
+        container.layer.borderColor = accentColor.cgColor
+
+        container.layer.shadowColor = accentColor.cgColor
+        container.layer.shadowOpacity = 0.6
+        container.layer.shadowRadius = 10
+        container.layer.shadowOffset = .zero
+
+        
         
         let nameLabel = UILabel()
         nameLabel.text = player.title
+        nameLabel.textColor = accentColor
         nameLabel.font = UIFont.systemFont(ofSize: 16, weight: .medium)
-        nameLabel.textColor = .black
         nameLabel.textAlignment = .center
 
         let scoreLabel = UILabel()
         scoreLabel.text = "0"
-        scoreLabel.font = UIFont.systemFont(ofSize: 28, weight: .bold)
-        scoreLabel.textColor = .black
+        scoreLabel.textColor = accentColor
+        scoreLabel.font = UIFont.systemFont(ofSize: 32, weight: .bold)
         scoreLabel.textAlignment = .center
         
         scoreLabels[player] = scoreLabel
         
         let vStack = UIStackView(arrangedSubviews: [nameLabel, scoreLabel])
         vStack.axis = .vertical
-        vStack.spacing = 5
+        vStack.spacing = 8
         vStack.translatesAutoresizingMaskIntoConstraints = false
         
         
@@ -269,7 +277,7 @@ class GameboardViewController: UIViewController, GameManagerDelegate {
             scoreBoard.centerXAnchor.constraint(equalTo: view.centerXAnchor),
             scoreBoard.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
             scoreBoard.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),
-            scoreBoard.heightAnchor.constraint(equalToConstant: 150)
+            scoreBoard.heightAnchor.constraint(equalToConstant: 88)
         ])
         
         
