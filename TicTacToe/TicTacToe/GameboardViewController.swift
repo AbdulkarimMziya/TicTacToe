@@ -7,6 +7,34 @@
 
 import UIKit
 
+// MARK: App Theme Colors
+enum AppColors {
+
+    // Neon Accents
+    static let neonBlue = UIColor(
+        red: 64/255,
+        green: 216/255,
+        blue: 255/255,
+        alpha: 1
+    )
+
+    static let neonRed = UIColor(
+        red: 255/255,
+        green: 77/255,
+        blue: 109/255,
+        alpha: 1
+    )
+
+    // Backgrounds
+    static let darkCardBG = UIColor(
+        red: 15/255,
+        green: 24/255,
+        blue: 40/255,
+        alpha: 1
+    )
+}
+
+
 // MARK: Scoreboard Class
 class ScoreBoardView: UIView {
     
@@ -23,11 +51,6 @@ class ScoreBoardView: UIView {
     }
     
     private var scoreLabels: [Player: UILabel] = [:]
-
-    
-    private let neonBlue = UIColor(red: 64/255, green: 216/255, blue: 255/255, alpha: 1)
-    private let neonRed = UIColor(red: 255/255, green: 77/255, blue: 109/255, alpha: 1)
-    private let darkCardBG = UIColor(red: 15/255, green: 24/255, blue: 40/255, alpha: 1)
     
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -71,15 +94,15 @@ class ScoreBoardView: UIView {
         let accentColor: UIColor
             switch player {
             case .player:
-                accentColor = neonBlue
+                accentColor = AppColors.neonBlue
             case .draw:
                 accentColor = .systemGray
             case .opponent:
-                accentColor = neonRed
+                accentColor = AppColors.neonRed
         }
 
         let container = UIView()
-        container.backgroundColor = darkCardBG
+        container.backgroundColor = AppColors.darkCardBG
         container.layer.cornerRadius = 16
         container.clipsToBounds = false
         container.layer.borderWidth = 1.5
@@ -136,6 +159,7 @@ class ScoreBoardView: UIView {
 // MARK: Custom Board Cell Class
 class Cell: UIButton {
     
+    
     enum CellSymbol: String {
         case x = "X", o = "O", empty = ""
     }
@@ -156,17 +180,37 @@ class Cell: UIButton {
     }
     
     private func setupCell() {
-        self.backgroundColor = .systemTeal
-        self.layer.cornerRadius = 5
+        
+        self.backgroundColor = UIColor(red: 20/255, green: 32/255, blue: 55/255, alpha: 1)
+        self.layer.cornerRadius = 8
         self.setTitle(symbol.rawValue, for: .normal)
         self.titleLabel?.font = UIFont.systemFont(ofSize: 64, weight: .medium)
-        self.setTitleColor(.black, for: .disabled)
+        
+        self.layer.borderColor = UIColor.systemGray.cgColor
+        self.clipsToBounds = false
+        self.layer.borderWidth = 1.5
     }
+    
+    private func accentColor(for symbol: CellSymbol) -> UIColor {
+        switch symbol {
+        case .x:
+            return AppColors.neonBlue
+        case .o:
+            return AppColors.neonRed
+        case .empty:
+            return .systemGray
+        }
+    }
+
     
     func setSymbol(_ newSymbol: CellSymbol) {
         self.symbol = newSymbol
+        
+        let accent = accentColor(for: newSymbol)
 
         self.setTitle(newSymbol.rawValue, for: .normal)
+        self.setTitleColor(accent, for: .normal)
+        
         self.isEnabled = newSymbol != .empty ? false : true
     }
     
@@ -204,10 +248,10 @@ class GameboardView: UIView {
         self.addSubview(boardStack)
         
         NSLayoutConstraint.activate([
-            boardStack.topAnchor.constraint(equalTo: topAnchor),
-            boardStack.leadingAnchor.constraint(equalTo: leadingAnchor),
-            boardStack.trailingAnchor.constraint(equalTo: trailingAnchor),
-            boardStack.bottomAnchor.constraint(equalTo: bottomAnchor)
+            boardStack.topAnchor.constraint(equalTo: topAnchor, constant: 8),
+            boardStack.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 8),
+            boardStack.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -8),
+            boardStack.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -8)
         ])
         
         for row in 0..<3 {
@@ -282,6 +326,13 @@ class GameboardViewController: UIViewController, GameManagerDelegate {
         
         
         boardView.translatesAutoresizingMaskIntoConstraints = false
+        boardView.backgroundColor = AppColors.darkCardBG
+        boardView.layer.cornerRadius = 16
+        boardView.clipsToBounds = false
+        boardView.layer.shadowColor = UIColor.black.cgColor
+        boardView.layer.shadowOpacity = 0.3
+        boardView.layer.shadowRadius = 12
+        boardView.layer.shadowOffset = CGSize(width: 0, height: 6)
         view.addSubview(boardView)
         
         NSLayoutConstraint.activate([
