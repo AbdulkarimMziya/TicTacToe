@@ -298,6 +298,16 @@ class GameboardViewController: UIViewController, GameManagerDelegate {
     let boardView = GameboardView()
     var currentPlayer: Cell.CellSymbol = .x
     
+    private let statusLabel: UILabel = {
+        let label = UILabel()
+        label.text = "Player X Turn"
+        label.font = UIFont.systemFont(ofSize: 24, weight: .medium)
+        label.textAlignment = .center
+        label.textColor = AppColors.neonBlue
+        label.translatesAutoresizingMaskIntoConstraints = false
+        return label
+    }()
+    
     private var restartButton: UIButton = {
         let btn = UIButton(type: .system)
         btn.setTitle("Play Again", for: .normal)
@@ -323,7 +333,7 @@ class GameboardViewController: UIViewController, GameManagerDelegate {
             scoreBoard.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),
             scoreBoard.heightAnchor.constraint(equalToConstant: 88)
         ])
-        
+
         
         boardView.translatesAutoresizingMaskIntoConstraints = false
         boardView.backgroundColor = AppColors.darkCardBG
@@ -336,11 +346,12 @@ class GameboardViewController: UIViewController, GameManagerDelegate {
         view.addSubview(boardView)
         
         NSLayoutConstraint.activate([
-            boardView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
             boardView.centerYAnchor.constraint(equalTo: view.centerYAnchor),
+            boardView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
             boardView.widthAnchor.constraint(equalToConstant: 300),
             boardView.heightAnchor.constraint(equalToConstant: 300)
         ])
+
         
         for row in boardView.cells {
             for cell in row {
@@ -348,11 +359,19 @@ class GameboardViewController: UIViewController, GameManagerDelegate {
             }
         }
         
+        view.addSubview(statusLabel)
+
+        NSLayoutConstraint.activate([
+            statusLabel.bottomAnchor.constraint(equalTo: boardView.topAnchor, constant: -16),
+            statusLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor)
+        ])
+
+        
         view.addSubview(restartButton)
         
         NSLayoutConstraint.activate([
             restartButton.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            restartButton.topAnchor.constraint(equalTo: boardView.bottomAnchor, constant: 48),
+            restartButton.topAnchor.constraint(equalTo: boardView.bottomAnchor, constant: 40)
         ])
         restartButton.addTarget(self, action: #selector(restartTapped), for: .touchUpInside)
 
@@ -381,37 +400,52 @@ class GameboardViewController: UIViewController, GameManagerDelegate {
     
     func gameDidEnd(result: GameManager.GameResult) {
         setBoardEnabled(false)
-        
+
         switch result {
-            case .win(let winner):
-                if winner == .x {
-                    playerScore += 1
-                    scoreBoard.updateScore(for: .player, to: playerScore)
-                } else {
-                    opponentScore += 1
-                    scoreBoard.updateScore(for: .opponent, to: opponentScore)
-                }
-                print("Winner:", winner)
+        case .win(let winner):
+            if winner == .x {
+                playerScore += 1
+                scoreBoard.updateScore(for: .player, to: playerScore)
+                statusLabel.text = "Player X Wins!"
+                statusLabel.textColor = AppColors.neonBlue
+            } else {
+                opponentScore += 1
+                scoreBoard.updateScore(for: .opponent, to: opponentScore)
+                statusLabel.text = "Opponent O Wins!"
+                statusLabel.textColor = AppColors.neonRed
+            }
 
-            case .draw:
-                drawScore += 1
-                scoreBoard.updateScore(for: .draw, to: drawScore)
-                print("Draw")
+        case .draw:
+            drawScore += 1
+            scoreBoard.updateScore(for: .draw, to: drawScore)
+            statusLabel.text = "It's a Draw"
+            statusLabel.textColor = .systemGray
 
-            case .ongoing:
-                break
+        case .ongoing:
+            break
         }
     }
 
     func playerDidChange(to player: Cell.CellSymbol) {
-        print("Current Player:", player)
+        switch player {
+        case .x:
+            statusLabel.text = "Player X Turn"
+            statusLabel.textColor = AppColors.neonBlue
+        case .o:
+            statusLabel.text = "Opponent O Turn"
+            statusLabel.textColor = AppColors.neonRed
+        case .empty:
+            break
+        }
     }
-    
     
     func gameDidReset() {
         boardView.clearBoard()
         setBoardEnabled(true)
+        statusLabel.text = "Player X Turn"
+        statusLabel.textColor = AppColors.neonBlue
     }
+
     
     private func setBoardEnabled(_ enabled: Bool) {
         for row in boardView.cells {
