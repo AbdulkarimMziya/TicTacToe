@@ -21,6 +21,6 @@ enum GameStatus {
 // MARK: Game Struct
 struct Game {
     var currentPlayer: Player
-    var board: [Player?] = Array(repeating: nil, count: 9)
+    var board: [Player?]
     var gameStatus: GameStatus
 }
