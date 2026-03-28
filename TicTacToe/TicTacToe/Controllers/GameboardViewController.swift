@@ -10,14 +10,18 @@ import UIKit
 
 class GameboardViewController: UIViewController {
     
+    // MARK: Class Properties
+    let cellSpacing = 4.0
+    
     // MARK: UI Declarations
     lazy var boardView: UICollectionView = {
         let layout = UICollectionViewFlowLayout()
-        layout.scrollDirection = .vertical
+        layout.minimumLineSpacing = cellSpacing
+        layout.minimumInteritemSpacing = cellSpacing
         
         let collection = UICollectionView(frame: .zero, collectionViewLayout: layout)
         collection.register(UICollectionViewCell.self, forCellWithReuseIdentifier: "BoardCell")
-        collection.backgroundColor = .systemGray2
+        collection.backgroundColor = .darkCardBG
         collection.translatesAutoresizingMaskIntoConstraints = false
         return collection
     }()
@@ -28,6 +32,10 @@ class GameboardViewController: UIViewController {
         
         view.addSubview(boardView)
         setupLayout()
+        
+        // Collection delegates
+        boardView.dataSource = self
+        boardView.delegate = self
         
     }
     
