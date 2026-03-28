@@ -7,106 +7,104 @@
 
 import Foundation
 
-// MARK: Game Logic Implementation
+
 class GameManager {
+    
+    var game: Game
     
     weak var delegate: GameManagerDelegate?
     
-    private var gameBoard: [[Cell.CellSymbol]]
-    
-    var currentPlayer = Cell.CellSymbol.x
-    
-    enum GameResult {
-        case win(Cell.CellSymbol)
-        case draw
-        case ongoing
-    }
-    
     init() {
-        self.gameBoard = Array(
-            repeating: Array(repeating:.empty, count: 3),
-            count: 3
+        let player:Player = Bool.random() ? .X : .O
+        
+        game = Game(currentPlayer: player,
+                    board: Array(repeating: nil, count: 9),
+                    gameStatus: .Ongoing
         )
     }
     
+    // MARK: Methods
     
-    func makeMove(x:Int, y:Int) {
-        gameBoard[x][y] = currentPlayer
-        
-        let result  = checkGameState()
-        
-        switch result {
-            case .ongoing:
-                currentPlayer = (currentPlayer == .x) ? .o : .x
-                delegate?.playerDidChange(to: currentPlayer)
-
-            case .win, .draw:
-                delegate?.gameDidEnd(result: result)
+    func makeMove(at index:Int) {
+        // Make move if the game is 'Ongoing'
+        guard case .Ongoing = game.gameStatus else {
+            return
         }
         
-    }
+        // Allow move if index is empty
+        guard game.board[index] == nil else {
+            return
+        }
+        
+        let currentPlayer = game.currentPlayer
+        
+        // Place the current Player symbol at position
+        game.board[index] = currentPlayer
+        
+        // Check for Winner
+        let gameStatus = checkGameStatus(game.board, for: currentPlayer)
+        
+        switch(gameStatus) {
+        case .Ongoing:
+            // Switch turn to other Player
+            game.gameStatus = gameStatus
+            game.currentPlayer = currentPlayer == .X ? .O : .X
+            
+            // Update Delegate of turns
+            delegate?.playerDidChange(to: game.currentPlayer)
+        case .Win(_):
+            game.gameStatus = gameStatus
+            
+            // Update Delegate Game ends and reset
+            delegate?.gameDidEnd(winner: currentPlayer)
+        case .Draw:
+            // Game Resets
+            game.gameStatus = gameStatus
+            
+            // Update Delegate to reset
+            delegate?.gameDidDraw()
     
-    func checkGameState() -> GameResult {
-        
-        // Check Rows
-        for row in 0..<3 {
-            let first = gameBoard[row][0]
-
-            // Skip empty rows
-            if first == .empty { continue }
-
-            if gameBoard[row][1] == first && gameBoard[row][2] == first {
-                return .win(first)
-            }
         }
-        
-        // Check columns
-        for col in 0..<3 {
-            let first = gameBoard[0][col]
 
-            // Skip empty columns
-            if first == .empty { continue }
 
-            if gameBoard[1][col] == first && gameBoard[2][col] == first {
-                return .win(first)
-            }
-        }
-        
-        // Check diagonals
-        let center = gameBoard[1][1]
-
-        if center != .empty {
-
-            // Top-left to bottom-right
-            if gameBoard[0][0] == center && gameBoard[2][2] == center {
-                return .win(center)
-            }
-
-            // Top-right to bottom-left
-            if gameBoard[0][2] == center && gameBoard[2][0] == center {
-                return .win(center)
-            }
-        }
-        
-        // Check for draw
-        for row in gameBoard {
-            if row.contains(.empty) {
-                return .ongoing
-            }
-        }
-        
-        return .draw
     }
     
     func resetGame() {
-        gameBoard = Array(
-            repeating: Array(repeating: .empty, count: 3),
-            count: 3
+        let player:Player = Bool.random() ? .X : .O
+        
+        game = Game(currentPlayer: player,
+                    board: Array(repeating: nil, count: 9),
+                    gameStatus: .Ongoing
         )
 
-        currentPlayer = .x
-        delegate?.gameDidReset()
-        delegate?.playerDidChange(to: currentPlayer)
     }
+    
+    
+    // MARK: Helper Functions
+    func checkGameStatus(_ board: [Player?], for currentPlayer:Player) -> GameStatus {
+        
+        let winningPatterns = [
+            [0,1,2], [3,4,5], [6,7,8], // rows
+            [0,3,6], [1,4,7], [2,5,8], // columns
+            [0,4,8], [2,4,6]           // diagonals
+        ]
+        
+        for pattern in winningPatterns {
+            if pattern.allSatisfy({ board[$0] == currentPlayer }) {
+                return .Win(currentPlayer)
+            }
+        }
+
+        // Check for draws
+        if !board.contains(nil) {
+            return GameStatus.Draw
+        }
+
+        
+        
+        return GameStatus.Ongoing
+    }
+    
+    
    
 }
