@@ -77,6 +77,8 @@ class GameManager {
                     gameStatus: .Ongoing
         )
 
+        // Update Delegate New Game
+        delegate?.gameDidStart(with: player)
     }
     
     
@@ -105,6 +107,8 @@ class GameManager {
         return GameStatus.Ongoing
     }
     
-    
+    func startGame() {
+        delegate?.gameDidStart(with: game.currentPlayer)
+    }
    
 }
