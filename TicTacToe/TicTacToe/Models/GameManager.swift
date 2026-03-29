@@ -7,12 +7,17 @@
 
 import Foundation
 
+enum Difficulty {
+    case easy, medium, hard
+}
 
 class GameManager {
     
     var game: Game
     
     weak var delegate: GameManagerDelegate?
+    
+    static var currentDifficulty: Difficulty = .medium
     
     init() {
         let player:Player = Bool.random() ? .X : .O
@@ -50,6 +55,11 @@ class GameManager {
             game.gameStatus = gameStatus
             game.currentPlayer = currentPlayer == .X ? .O : .X
             
+            // If .O make AI make move
+            if game.currentPlayer == .O {
+                makeAIMove()
+            }
+            
             // Update Delegate of turns
             delegate?.playerDidChange(to: game.currentPlayer)
         case .Win(_):
@@ -78,7 +88,33 @@ class GameManager {
         )
 
         // Update Delegate New Game
-        delegate?.gameDidStart(with: player)
+        startGame()
+    }
+    
+    func makeAIMove() {
+        // find all empy spots
+        let board = game.board
+        let availableSpots = board.indices.filter({board[$0] == nil})
+        
+        let aiMove: Int?
+        
+        // Pick move according to difficulty selected:
+        switch GameManager.currentDifficulty {
+        case .easy:
+            aiMove = availableSpots.randomElement()
+        case .medium:
+            aiMove = getMediumAIMove(availableSpots)
+        case .hard:
+            aiMove = getHardAIMove(availableSpots)
+        }
+        
+        if let pos = aiMove {
+            // Delay move then execute
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.8) {
+                self.makeMove(at: pos)
+            }
+        }
+    
     }
     
     
@@ -103,12 +139,78 @@ class GameManager {
         }
 
         
-        
         return GameStatus.Ongoing
     }
     
     func startGame() {
         delegate?.gameDidStart(with: game.currentPlayer)
+        
+        // If AI starts, trigger the first move
+        if game.currentPlayer == .O {
+            makeAIMove()
+        }
+    }
+    
+    // MARK: AI Helper Methods
+    
+    // Medium AI
+    func getMediumAIMove(_ availableSpots: [Int]) -> Int? {
+        let humanPlayer: Player = .X
+        
+        // 1. If AI can win, then win
+        if let winMove = findWinningMove(for: .O) {
+            return winMove
+        }
+        // 2. If AI can block, then block
+        if let blockMove = findBlockMove(for: humanPlayer) {
+            return blockMove
+        }
+        
+        // 3. otherwise, select random position
+        return availableSpots.randomElement()
+    }
+    
+    // Hard AI
+    func getHardAIMove(_ availableSpots: [Int]) -> Int? {
+        let humanPlayer: Player = .X
+        
+        // 1. If AI can win, then win
+        if let winMove = findWinningMove(for: .O) {
+            return winMove
+        }
+        
+        // 2. If AI can block, then block
+        if let blockMove = findBlockMove(for: humanPlayer) {
+            return blockMove
+        }
+        
+        // 3. If AI can't block, then take center
+        if availableSpots.contains(4) {
+            return 4 // index of center
+        }
+        
+        // 4. otherwise, select random position
+        return availableSpots.randomElement()
+    }
+    
+    func findWinningMove(for player: Player) -> Int? {
+        let currentBoardState = game.board
+        
+        for pos in currentBoardState.indices where currentBoardState[pos] == nil {
+            var tempBoard = currentBoardState
+            tempBoard[pos] = player
+            
+            // If move results in a win, return index
+            if case .Win = checkGameStatus(tempBoard, for: player) {
+                return pos
+            }
+            
+        }
+        return nil
+    }
+    
+    func findBlockMove(for player: Player) -> Int? {
+        return findWinningMove(for: player)
     }
    
 }
