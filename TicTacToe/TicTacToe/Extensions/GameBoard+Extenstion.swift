@@ -57,10 +57,6 @@ extension GameboardViewController: UICollectionViewDelegate {
         // Trigger the Manager to make move
         manager.makeMove(at: indexPath.item)
         
-        // Update board - trigger reload
-        //board = manager.game.board
-        
-        print("Cell \(indexPath.item) triggered")
     }
 }
 
@@ -82,8 +78,8 @@ extension GameboardViewController: GameManagerDelegate {
             displayLable.textColor = .neonRed
         }
         
-        // Hide the restart and exit buttons
-        hBtnStack.isHidden = true
+        // Show the restart and exit buttons before player makes move
+        hBtnStack.isHidden = false
     }
     
     func gameDidEnd(winner: Player) {
@@ -116,11 +112,17 @@ extension GameboardViewController: GameManagerDelegate {
             displayLable.text = "Opponents turn!!!"
             displayLable.textColor = .neonRed
         }
+        
+        // Hide the restart and exit buttons after first move
+        hBtnStack.isHidden = true
     }
     
     func gameDidDraw() {
         // Update the local board property
         self.board = manager.game.board
+        
+        displayLable.text = "It's a Draw!"
+        displayLable.textColor = .systemGray
         
         // Show the restart and exit buttons
         hBtnStack.isHidden = false
