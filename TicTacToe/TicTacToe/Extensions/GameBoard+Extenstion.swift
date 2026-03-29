@@ -81,6 +81,9 @@ extension GameboardViewController: GameManagerDelegate {
             displayLable.text = "Opponent start!!!"
             displayLable.textColor = .neonRed
         }
+        
+        // Hide the restart and exit buttons
+        hBtnStack.isHidden = true
     }
     
     func gameDidEnd(winner: Player) {
@@ -96,6 +99,9 @@ extension GameboardViewController: GameManagerDelegate {
             displayLable.text = "Opponents Won!!!"
             displayLable.textColor = .neonRed
         }
+        
+        // Show the restart and exit buttons
+        hBtnStack.isHidden = false
     }
     
     func playerDidChange(to player: Player) {
@@ -115,6 +121,9 @@ extension GameboardViewController: GameManagerDelegate {
     func gameDidDraw() {
         // Update the local board property
         self.board = manager.game.board
+        
+        // Show the restart and exit buttons
+        hBtnStack.isHidden = false
     }
     
     

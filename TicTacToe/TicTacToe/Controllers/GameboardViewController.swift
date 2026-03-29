@@ -43,13 +43,61 @@ class GameboardViewController: UIViewController {
         return lable
     }()
     
+    let restartButton: UIButton = {
+        let btn = UIButton()
+        
+        var config = UIButton.Configuration.tinted()
+        config.title = "Play Again"
+        config.baseBackgroundColor = .systemGreen
+        config.baseForegroundColor = .systemGreen
+        config.titlePadding = 4
+        config.buttonSize = .large
+        config.cornerStyle = .capsule
+        
+        btn.configuration = config
+        btn.translatesAutoresizingMaskIntoConstraints = false
+        return btn
+    }()
+    
+    let exitButton: UIButton = {
+        let btn = UIButton()
+        
+        var config = UIButton.Configuration.tinted()
+        config.title = "Exit"
+        config.baseBackgroundColor = .neonRed
+        config.baseForegroundColor = .neonRed
+        config.titlePadding = 4
+        config.buttonSize = .large
+        config.cornerStyle = .capsule
+        
+        btn.configuration = config
+        btn.translatesAutoresizingMaskIntoConstraints = false
+        return btn
+    }()
+    
+    lazy var hBtnStack: UIStackView = {
+        let stack = UIStackView(arrangedSubviews: [restartButton,exitButton])
+        stack.axis = .horizontal
+        stack.distribution = .equalSpacing
+        stack.alignment = .center
+        stack.isHidden = true
+        
+        stack.translatesAutoresizingMaskIntoConstraints = false
+        return stack
+    }()
+    
     // MARK: Controller Life Cycles
     override func viewDidLoad() {
         super.viewDidLoad()
         
         view.addSubview(boardView)
         view.addSubview(displayLable)
+        view.addSubview(hBtnStack)
         setupLayout()
+        
+        // btn target functions
+        restartButton.addTarget(self, action: #selector(didTapRestartBtn), for: .touchUpInside)
+        exitButton.addTarget(self, action: #selector(didTapExitBtn), for: .touchUpInside)
         
         // Collection delegates
         boardView.dataSource = self
@@ -72,9 +120,24 @@ class GameboardViewController: UIViewController {
             
             // DisplayLable layout
             displayLable.centerXAnchor.constraint(equalTo: boardView.centerXAnchor),
-            displayLable.bottomAnchor.constraint(equalTo: boardView.topAnchor, constant: -8)
+            displayLable.bottomAnchor.constraint(equalTo: boardView.topAnchor, constant: -8),
+            
+            // HStack Layout
+            hBtnStack.topAnchor.constraint(equalTo: boardView.bottomAnchor, constant: 32),
+            hBtnStack.leadingAnchor.constraint(equalTo: boardView.leadingAnchor),
+            hBtnStack.trailingAnchor.constraint(equalTo: boardView.trailingAnchor)
         ])
         
+    }
+    
+    @objc
+    func didTapRestartBtn() {
+        manager.resetGame()
+    }
+    
+    @objc
+    func didTapExitBtn() {
+        navigationController?.popViewController(animated: true)
     }
     
 
