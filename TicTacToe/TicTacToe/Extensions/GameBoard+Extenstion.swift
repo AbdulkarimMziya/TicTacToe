@@ -67,6 +67,22 @@ extension GameboardViewController: UICollectionViewDelegate {
 
 // MARK: GameManager Delegate
 extension GameboardViewController: GameManagerDelegate {
+    
+    func gameDidStart(with player: Player) {
+        // Update the local board property
+        self.board = manager.game.board
+        
+        // Display Player turn
+        switch player {
+        case .X:
+            displayLable.text = "Player X start!!!"
+            displayLable.textColor = .neonBlue
+        case .O:
+            displayLable.text = "Opponent start!!!"
+            displayLable.textColor = .neonRed
+        }
+    }
+    
     func gameDidEnd(winner: Player) {
         // Update the local board property
         self.board = manager.game.board

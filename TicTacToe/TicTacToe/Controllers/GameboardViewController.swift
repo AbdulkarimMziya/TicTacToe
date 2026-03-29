@@ -57,6 +57,7 @@ class GameboardViewController: UIViewController {
         
         // GameManager delegate
         manager.delegate = self
+        manager.startGame()
     }
     
     // MARK: UI Constraints

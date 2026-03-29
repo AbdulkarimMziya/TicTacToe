@@ -9,6 +9,7 @@ import Foundation
 
 // MARK: Game Delegate Protocol
 protocol GameManagerDelegate: AnyObject {
+    func gameDidStart(with player: Player)
     func gameDidEnd(winner: Player)
     func playerDidChange(to player: Player)
     func gameDidDraw()
