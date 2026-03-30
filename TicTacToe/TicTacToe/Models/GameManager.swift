@@ -19,6 +19,9 @@ class GameManager {
     
     static var currentDifficulty: Difficulty = .medium
     
+    var playerXScore = 0
+    var playerOScore = 0
+    
     init() {
         let player:Player = Bool.random() ? .X : .O
         
@@ -64,6 +67,13 @@ class GameManager {
             delegate?.playerDidChange(to: game.currentPlayer)
         case .Win(_):
             game.gameStatus = gameStatus
+            
+            // Update score
+            if currentPlayer == .X {
+                playerXScore += 1
+            } else {
+                playerOScore += 1
+            }
             
             // Update Delegate Game ends and reset
             delegate?.gameDidEnd(winner: currentPlayer)

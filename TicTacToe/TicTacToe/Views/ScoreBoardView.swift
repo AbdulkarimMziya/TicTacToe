@@ -35,16 +35,15 @@ class ScoreBoardView: UIView {
     }
     
     func setUpScoreBoard() {
-        self.backgroundColor = .systemBackground
+        self.backgroundColor = .darkCardBG
         self.layer.cornerRadius = 16
         
         
-        let card = makeScoreCard(for: .player)
-        let card1 = makeScoreCard(for: .draw)
+        let card1 = makeScoreCard(for: .player)
         let card2 = makeScoreCard(for: .opponent)
         
         
-        let row = UIStackView(arrangedSubviews: [card,card1,card2])
+        let row = UIStackView(arrangedSubviews: [card1,card2])
         row.axis = .horizontal
         row.spacing = 8
         row.distribution = .fillEqually

@@ -23,13 +23,15 @@ class GameboardViewController: UIViewController {
     let cellSpacing = 4.0
     
     // MARK: UI Declarations
+    let scoreboard = ScoreBoardView()
+    
     lazy var boardView: UICollectionView = {
         let layout = UICollectionViewFlowLayout()
         layout.minimumLineSpacing = cellSpacing
         layout.minimumInteritemSpacing = cellSpacing
         
         let collection = UICollectionView(frame: .zero, collectionViewLayout: layout)
-        collection.register(UICollectionViewCell.self, forCellWithReuseIdentifier: cellId)
+        collection.register(BoardCell.self, forCellWithReuseIdentifier: cellId)
         collection.backgroundColor = .darkCardBG
         collection.translatesAutoresizingMaskIntoConstraints = false
         return collection
@@ -46,11 +48,16 @@ class GameboardViewController: UIViewController {
     let restartButton: UIButton = {
         let btn = UIButton()
         
+        var container = AttributeContainer()
+        container.font = UIFont.systemFont(ofSize: 16, weight: .semibold)
+        
         var config = UIButton.Configuration.tinted()
-        config.title = "Play Again"
+        config.attributedTitle = AttributedString("Play Again", attributes: container)
+        config.image = UIImage(systemName: "arrow.trianglehead.clockwise")
         config.baseBackgroundColor = .systemGreen
         config.baseForegroundColor = .systemGreen
         config.titlePadding = 4
+        config.imagePadding = 8
         config.buttonSize = .large
         config.cornerStyle = .capsule
         
@@ -62,11 +69,17 @@ class GameboardViewController: UIViewController {
     let exitButton: UIButton = {
         let btn = UIButton()
         
+        var container = AttributeContainer()
+        container.font = UIFont.systemFont(ofSize: 16, weight: .semibold)
+        
+        
         var config = UIButton.Configuration.tinted()
-        config.title = "Exit"
+        config.attributedTitle = AttributedString("Exit", attributes: container)
+        config.image = UIImage(systemName: "door.left.hand.open")
         config.baseBackgroundColor = .neonRed
         config.baseForegroundColor = .neonRed
         config.titlePadding = 4
+        config.imagePadding = 8
         config.buttonSize = .large
         config.cornerStyle = .capsule
         
@@ -90,6 +103,11 @@ class GameboardViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        view.backgroundColor = .darkGreyBG
+        
+        view.addSubview(scoreboard)
+        scoreboard.translatesAutoresizingMaskIntoConstraints = false
+        
         view.addSubview(boardView)
         view.addSubview(displayLable)
         view.addSubview(hBtnStack)
@@ -112,6 +130,12 @@ class GameboardViewController: UIViewController {
     private func setupLayout() {
         
         NSLayoutConstraint.activate([
+            // Score Cards layout
+            scoreboard.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 16),
+            scoreboard.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
+            scoreboard.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),
+            scoreboard.heightAnchor.constraint(equalToConstant: 100),
+            
             // Board layout
             boardView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
             boardView.centerYAnchor.constraint(equalTo: view.centerYAnchor),

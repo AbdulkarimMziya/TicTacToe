@@ -14,22 +14,17 @@ extension GameboardViewController: UICollectionViewDataSource {
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: cellId, for: indexPath)
+        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: cellId, for: indexPath) as! BoardCell
         
-        let playerSymbol = board[indexPath.item]
+        let player = board[indexPath.item]
         
-        switch playerSymbol{
-        case .X:
-            cell.backgroundColor = .neonBlue
-        case .O:
-            cell.backgroundColor = .neonRed
-        default:
-            cell.backgroundColor = .systemGray2
-        }
-        
+        cell.setSymbol(player)
+        cell.backgroundColor = .systemGray2
+        cell.layer.cornerRadius = 8
         
         return cell
     }
+
     
     
 }
@@ -53,6 +48,12 @@ extension GameboardViewController: UICollectionViewDelegateFlowLayout {
 extension GameboardViewController: UICollectionViewDelegate {
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        
+        // 1. Check if the cell is already occupied locally
+        guard board[indexPath.item] == nil else { return }
+        
+        // 2. Prevent human moves if it's currently the Opponent's (AI) turn
+        guard manager.game.currentPlayer == .X else { return }
         
         // Trigger the Manager to make move
         manager.makeMove(at: indexPath.item)
@@ -87,13 +88,18 @@ extension GameboardViewController: GameManagerDelegate {
         self.board = manager.game.board
         
         // Display relevant UI
+        // Update Scores
         switch winner {
         case .X:
             displayLable.text = "Player X Won!!!"
             displayLable.textColor = .neonBlue
+            
+            scoreboard.updateScore(for: .player, to: manager.playerXScore)
         case .O:
             displayLable.text = "Opponents Won!!!"
             displayLable.textColor = .neonRed
+            
+            scoreboard.updateScore(for: .opponent, to: manager.playerOScore)
         }
         
         // Show the restart and exit buttons

@@ -8,70 +8,43 @@
 import UIKit
 
 // MARK: Custom Board Cell Class
-class Cell: UIButton {
+class BoardCell: UICollectionViewCell {
     
+    private let symbolLabel: UILabel = {
+        let label = UILabel()
+        label.textAlignment = .center
+        label.font = .systemFont(ofSize: 64, weight: .medium)
+        label.translatesAutoresizingMaskIntoConstraints = false
+        return label
+    }()
     
-    enum CellSymbol: String {
-        case x = "X", o = "O", empty = ""
-    }
-    
-    private var symbol: CellSymbol = .empty
-    let xPos: Int
-    let yPos: Int
-    
-    init(xPos: Int, yPos: Int) {
-        self.xPos = xPos
-        self.yPos = yPos
-        super.init(frame: .zero)
+    override init(frame: CGRect) {
+        super.init(frame: frame)
         setupCell()
     }
     
-    required init?(coder aDecoder: NSCoder) {
+    required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
     
     private func setupCell() {
+        contentView.backgroundColor = .systemGray2
+        contentView.layer.cornerRadius = 8
+        contentView.addSubview(symbolLabel)
         
-        self.backgroundColor = UIColor(red: 20/255, green: 32/255, blue: 55/255, alpha: 1)
-        self.layer.cornerRadius = 8
-        self.setTitle(symbol.rawValue, for: .normal)
-        self.titleLabel?.font = UIFont.systemFont(ofSize: 64, weight: .medium)
-        
-        self.layer.borderColor = UIColor.systemGray.cgColor
-        self.clipsToBounds = false
-        self.layer.borderWidth = 1.5
+        NSLayoutConstraint.activate([
+            symbolLabel.centerXAnchor.constraint(equalTo: contentView.centerXAnchor),
+            symbolLabel.centerYAnchor.constraint(equalTo: contentView.centerYAnchor)
+        ])
     }
     
-    private func accentColor(for symbol: CellSymbol) -> UIColor {
-        switch symbol {
-        case .x:
-            return .neonBlue
-        case .o:
-            return .neonRed
-        case .empty:
-            return .systemGray
+    func setSymbol(_ newSymbol: Player?) {
+        guard let symbol = newSymbol else {
+            symbolLabel.text = ""
+            return
         }
-    }
-
-    
-    func setSymbol(_ newSymbol: CellSymbol) {
-        self.symbol = newSymbol
         
-        let accent = accentColor(for: newSymbol)
-
-        self.setTitle(newSymbol.rawValue, for: .normal)
-        self.setTitleColor(accent, for: .normal)
-        
-        self.isEnabled = newSymbol != .empty ? false : true
+        symbolLabel.text = (symbol == .X) ? "X" : "O"
+        symbolLabel.textColor = (symbol == .X) ? .neonBlue : .neonRed
     }
-    
-    
-    func reset() {
-        setSymbol(.empty)
-    }
-    
-    func configureTap(target: Any?, action: Selector) {
-        addTarget(target, action: action, for: .touchUpInside)
-    }
-
 }
