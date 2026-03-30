@@ -9,6 +9,14 @@ import UIKit
 
 class ViewController: UIViewController {
     
+    private let appBanner: UIImageView = {
+        let img = UIImageView()
+        img.image = UIImage(named: "banner-transparent")
+        
+        img.translatesAutoresizingMaskIntoConstraints = false
+        return img
+    }()
+    
     private var gameTitle: UILabel = {
         let label = UILabel()
         label.text = "Ultimate Tic Tac Toe"
@@ -57,13 +65,19 @@ class ViewController: UIViewController {
 
         view.backgroundColor = .darkGreyBG
         
+        view.addSubview(appBanner)
         view.addSubview(gameTitle)
         view.addSubview(startbutton)
         view.addSubview(settingsButton)
         
         NSLayoutConstraint.activate([
+            appBanner.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
+            appBanner.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            appBanner.widthAnchor.constraint(equalTo: view.widthAnchor, multiplier: 1),
+            appBanner.heightAnchor.constraint(equalTo: appBanner.widthAnchor, multiplier: 1),
+            
             gameTitle.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            gameTitle.centerYAnchor.constraint(equalTo: view.centerYAnchor),
+            gameTitle.topAnchor.constraint(equalTo: appBanner.bottomAnchor),
             
             startbutton.centerXAnchor.constraint(equalTo: view.centerXAnchor),
             startbutton.topAnchor.constraint(equalTo: gameTitle.bottomAnchor, constant: 32),
