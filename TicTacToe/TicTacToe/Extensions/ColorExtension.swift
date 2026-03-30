@@ -29,5 +29,13 @@ extension UIColor {
         blue: 40/255,
         alpha: 1
     )
+    
+    static let darkGreyBG = UIColor(
+        red: 20/255,
+        green: 20/255,
+        blue: 20/255,
+        alpha: 1
+    )
+    
 }
 
