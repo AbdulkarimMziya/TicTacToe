@@ -40,6 +40,8 @@
 		4D2DF3C62F86D38F004F502E /* GameWidgetExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = GameWidgetExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		4D2DF3C82F86D38F004F502E /* WidgetKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WidgetKit.framework; path = System/Library/Frameworks/WidgetKit.framework; sourceTree = SDKROOT; };
 		4D2DF3CA2F86D38F004F502E /* SwiftUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftUI.framework; path = System/Library/Frameworks/SwiftUI.framework; sourceTree = SDKROOT; };
+		4D2DF3DC2F86DA64004F502E /* TicTacToe.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = TicTacToe.entitlements; sourceTree = "<group>"; };
+		4D2DF3DD2F86DAD2004F502E /* GameWidgetExtension.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = GameWidgetExtension.entitlements; sourceTree = "<group>"; };
 		61C9765D2F0355B2004D2BB9 /* TicTacToe.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TicTacToe.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		61C9766E2F0355B6004D2BB9 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -95,6 +97,7 @@
 		61C976542F0355B2004D2BB9 = {
 			isa = PBXGroup;
 			children = (
+				4D2DF3DD2F86DAD2004F502E /* GameWidgetExtension.entitlements */,
 				61C9765F2F0355B2004D2BB9 /* TicTacToe */,
 				4D2DF3CC2F86D38F004F502E /* GameWidget */,
 				4D2DF3C72F86D38F004F502E /* Frameworks */,
@@ -114,6 +117,7 @@
 		61C9765F2F0355B2004D2BB9 /* TicTacToe */ = {
 			isa = PBXGroup;
 			children = (
+				4D2DF3DC2F86DA64004F502E /* TicTacToe.entitlements */,
 				4DA13E922F5735A2001A54FE /* Extensions */,
 				4DA13E912F573594001A54FE /* Controllers */,
 				4DA13E902F57358D001A54FE /* Views */,
@@ -261,6 +265,7 @@
 				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
+				CODE_SIGN_ENTITLEMENTS = GameWidgetExtension.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = 8C2UT78K3A;
@@ -297,6 +302,7 @@
 				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
+				CODE_SIGN_ENTITLEMENTS = GameWidgetExtension.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = 8C2UT78K3A;
@@ -445,6 +451,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = TicTacToe/TicTacToe.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = 8C2UT78K3A;
@@ -473,6 +480,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = TicTacToe/TicTacToe.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = 8C2UT78K3A;
