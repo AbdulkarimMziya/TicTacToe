@@ -6,3 +6,7 @@
 //
 
 import Foundation
+
+extension String {
+    static let appGroup = "group.com.codewithabdul.tictactoewidget"
+}
