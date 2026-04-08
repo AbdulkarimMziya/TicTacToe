@@ -6,6 +6,8 @@
 //
 
 import Foundation
+import SwiftUI
+import WidgetKit
 
 enum Difficulty {
     case easy, medium, hard
@@ -19,7 +21,9 @@ class GameManager {
     
     static var currentDifficulty: Difficulty = .medium
     
+    @AppStorage("playerXScore", store: UserDefaults(suiteName: .appGroup))
     var playerXScore = 0
+    @AppStorage("playerOScore", store: UserDefaults(suiteName: .appGroup))
     var playerOScore = 0
     
     init() {
@@ -74,6 +78,9 @@ class GameManager {
             } else {
                 playerOScore += 1
             }
+            
+            // Update Widget
+            WidgetCenter.shared.reloadAllTimelines()
             
             // Update Delegate Game ends and reset
             delegate?.gameDidEnd(winner: currentPlayer)
