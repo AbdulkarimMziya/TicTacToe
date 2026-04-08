@@ -9,50 +9,55 @@ import WidgetKit
 import SwiftUI
 
 struct Provider: TimelineProvider {
-    func placeholder(in context: Context) -> SimpleEntry {
-        SimpleEntry(date: Date(), emoji: "😀")
+    @AppStorage("playerXScore", store: UserDefaults(suiteName: .appGroup))
+    var wins = 0
+    
+    @AppStorage("playerOScore", store: UserDefaults(suiteName: .appGroup))
+    var loss = 0
+    
+    func placeholder(in context: Context) -> ScoreEntry {
+        ScoreEntry(date: Date(), playerXScore: wins, losses: loss)
     }
 
-    func getSnapshot(in context: Context, completion: @escaping (SimpleEntry) -> ()) {
-        let entry = SimpleEntry(date: Date(), emoji: "😀")
+    func getSnapshot(in context: Context, completion: @escaping (ScoreEntry) -> ()) {
+        let entry = ScoreEntry(date: Date(), playerXScore: wins, losses: loss)
         completion(entry)
     }
 
     func getTimeline(in context: Context, completion: @escaping (Timeline<Entry>) -> ()) {
-        var entries: [SimpleEntry] = []
-
-        // Generate a timeline consisting of five entries an hour apart, starting from the current date.
-        let currentDate = Date()
-        for hourOffset in 0 ..< 5 {
-            let entryDate = Calendar.current.date(byAdding: .hour, value: hourOffset, to: currentDate)!
-            let entry = SimpleEntry(date: entryDate, emoji: "😀")
-            entries.append(entry)
-        }
-
-        let timeline = Timeline(entries: entries, policy: .atEnd)
+        // Just one entry with the current scores
+        let entry = ScoreEntry(date: Date(), playerXScore: wins, losses: loss)
+        
+        // Policy .never means the widget only updates when the app tells it to
+        let timeline = Timeline(entries: [entry], policy: .never)
         completion(timeline)
     }
+
 
 //    func relevances() async -> WidgetRelevances<Void> {
 //        // Generate a list containing the contexts this widget is relevant in.
 //    }
 }
 
-struct SimpleEntry: TimelineEntry {
+struct ScoreEntry: TimelineEntry {
     let date: Date
-    let emoji: String
+    let playerXScore: Int
+    let losses: Int
 }
 
 struct GameWidgetEntryView : View {
     var entry: Provider.Entry
 
+    @Environment(\.widgetFamily) var family
+    
     var body: some View {
-        VStack {
-            Text("Time:")
-            Text(entry.date, style: .time)
-
-            Text("Emoji:")
-            Text(entry.emoji)
+        switch family {
+        case .systemSmall:
+            SmallWidgetView(entry: entry)
+        case .systemMedium:
+            MediumWidgetView(entry: entry)
+        default:
+            SmallWidgetView(entry: entry)
         }
     }
 }
@@ -64,14 +69,17 @@ struct GameWidget: Widget {
         StaticConfiguration(kind: kind, provider: Provider()) { entry in
             if #available(iOS 17.0, *) {
                 GameWidgetEntryView(entry: entry)
-                    .containerBackground(.fill.tertiary, for: .widget)
+                    .containerBackground(
+                        Color(uiColor: .darkCardBG).gradient,
+                        for: .widget)
             } else {
                 GameWidgetEntryView(entry: entry)
                     .padding()
                     .background()
             }
         }
-        .configurationDisplayName("My Widget")
+        .supportedFamilies([.systemSmall, .systemMedium])
+        .configurationDisplayName("TicTacToe Widget")
         .description("This is an example widget.")
     }
 }
@@ -79,6 +87,11 @@ struct GameWidget: Widget {
 #Preview(as: .systemSmall) {
     GameWidget()
 } timeline: {
-    SimpleEntry(date: .now, emoji: "😀")
-    SimpleEntry(date: .now, emoji: "🤩")
+    ScoreEntry(date: .now, playerXScore: 5, losses: 3)
+}
+
+#Preview(as: .systemMedium) {
+    GameWidget()
+} timeline: {
+    ScoreEntry(date: .now, playerXScore: 23, losses: 10)
 }
