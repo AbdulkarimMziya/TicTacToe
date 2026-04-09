@@ -1,6 +1,6 @@
 # Ultimate Tic Tac Toe
 
-> A sleek, neon-themed iOS Tic Tac Toe game built with Swift and UIKit - featuring a tiered AI opponent, a dynamic scoreboard, and a fully programmatic modern UI.
+> A sleek, neon-themed iOS Tic Tac Toe game built with SwiftUI and UIKit - featuring a tiered AI opponent, a dynamic scoreboard, and a fully programmatic modern UI.
 
 ![iOS 15.0+](https://img.shields.io/badge/iOS-15.0%2B-blue?style=flat-square)
 ![Xcode 15.0+](https://img.shields.io/badge/Xcode-15.0%2B-147EFB?style=flat-square&logo=xcode)
